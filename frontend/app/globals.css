@@ -1,0 +1,495 @@
+/* ============================================================
+   Design tokens
+   A small, deliberate palette rather than one-off hex values
+   scattered through components — this is what makes a redesign
+   like this maintainable instead of a one-time coat of paint.
+   ============================================================ */
+:root {
+  /* Surfaces — layered, not flat. Each level up is slightly lighter. */
+  --bg: #0a0b0f;
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface-solid: #13151b;
+  --surface-hover: rgba(255, 255, 255, 0.055);
+  --surface-2: #191c24;
+
+  /* Borders — hairline, translucent so they pick up the glow behind them */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  /* Text */
+  --text: #f4f5f7;
+  --text-muted: #8d94a6;
+  --text-faint: #5c6478;
+
+  /* Accent — indigo → cyan gradient is the signature of the UI */
+  --accent: #6366f1;
+  --accent-2: #22d3ee;
+  --accent-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 45%, #22d3ee 100%);
+  --accent-soft: rgba(99, 102, 241, 0.14);
+
+  /* Semantic status colors */
+  --good: #34d399;
+  --good-soft: rgba(52, 211, 153, 0.14);
+  --moderate: #fbbf24;
+  --moderate-soft: rgba(251, 191, 36, 0.14);
+  --poor: #fb923c;
+  --poor-soft: rgba(251, 146, 60, 0.14);
+  --bad: #f87171;
+  --bad-soft: rgba(248, 113, 113, 0.14);
+
+  /* Geometry */
+  --radius-sm: 10px;
+  --radius: 18px;
+  --radius-lg: 24px;
+
+  /* Elevation — soft, low-contrast shadows; premium UIs whisper, not shout */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 24px 48px -16px rgba(0, 0, 0, 0.6), 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 12px 32px -12px rgba(99, 102, 241, 0.35);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  background-image:
+    radial-gradient(680px circle at 12% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
+    radial-gradient(560px circle at 88% 0%, rgba(34, 211, 238, 0.10), transparent 55%);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* Custom scrollbar — subtle, matches the surface palette instead of the OS default */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--bg);
+}
+
+a,
+button,
+input {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  background: var(--accent-soft);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+}
+
+.eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 3px var(--good-soft);
+}
+
+.header h1 {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #c7cbdb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header p {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 15px;
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* ============================================================
+   Card
+   ============================================================ */
+.card {
+  position: relative;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  gap: 12px;
+}
+
+.city-name {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.city-sub {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 3px 0 0;
+}
+
+.remove-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.card:hover .remove-btn,
+.remove-btn:focus-visible {
+  opacity: 1;
+}
+
+.remove-btn:hover {
+  color: var(--bad);
+  background: var(--bad-soft);
+  border-color: rgba(248, 113, 113, 0.25);
+}
+
+.temp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 18px 0 6px;
+}
+
+.temp-value {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.condition-label {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stat-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stat-row strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.score-ring {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.score-number {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.score-ring .city-sub {
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   Add city form
+   ============================================================ */
+.add-city-form {
+  display: flex;
+  gap: 10px;
+}
+
+.add-city-form input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 16px;
+  color: var(--text);
+  font-size: 14px;
+  min-width: 220px;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.add-city-form input::placeholder {
+  color: var(--text-faint);
+}
+
+.add-city-form input:hover {
+  border-color: var(--border-strong);
+}
+
+.add-city-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface-solid);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.add-city-form button {
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px -4px rgba(99, 102, 241, 0.5);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), filter 0.2s var(--ease);
+}
+
+.add-city-form button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.6);
+  filter: brightness(1.05);
+}
+
+.add-city-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-city-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ============================================================
+   States — error / empty / loading
+   ============================================================ */
+.error-text {
+  color: var(--bad);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 72px 24px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.empty-state-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.empty-state-title {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Skeleton loading card — replaces the plain "Loading…" text so the grid
+   doesn't jump/flash while requests are in flight. */
+.skeleton {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface-2) 0%, rgba(255, 255, 255, 0.09) 50%, var(--surface-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-title { width: 55%; height: 18px; margin-bottom: 10px; }
+.skeleton-sub { width: 35%; height: 12px; }
+.skeleton-temp { width: 40%; height: 42px; margin: 18px 0 8px; }
+.skeleton-row { width: 70%; height: 12px; margin-top: 14px; }
+.skeleton-block { width: 100%; height: 70px; margin-top: 18px; border-radius: var(--radius-sm); }
+
+/* ============================================================
+   Forecast chart
+   ============================================================ */
+.forecast-chart {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.forecast-chart-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 0 0 6px;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 560px) {
+  .container {
+    padding: 32px 16px 56px;
+  }
+  .header {
+    align-items: flex-start;
+  }
+  .header h1 {
+    font-size: 26px;
+  }
+  .add-city-form {
+    width: 100%;
+  }
+  .add-city-form input {
+    min-width: 0;
+    flex: 1;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "outdoor-conditions-api",
+  "version": "1.0.0",
+  "description": "Express API that aggregates weather, air quality, and daylight data from multiple third-party providers into a single outdoor-conditions feed.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

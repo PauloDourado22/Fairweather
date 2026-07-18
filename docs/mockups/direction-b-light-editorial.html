@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction B — Light Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ec;
+    --surface:#ffffff;
+    --surface-2:#efeae0;
+    --border:#e5ddcd;
+    --text:#242019;
+    --text-muted:#726b5c;
+    --text-faint:#a49d8b;
+    --accent:#c1502e;
+    --accent-soft:#f3e2da;
+    --good:#3c7a52;
+    --radius:16px;
+    --dur:220ms;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:64px 24px;
+  }
+  .label-tag{
+    font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--text-faint); margin:0 0 32px;
+  }
+  .wrap{max-width:960px;margin:0 auto;}
+  .header{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:44px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:14px;}
+  .eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--good);}
+  h1{font-family:'Fraunces',serif;font-size:40px;font-weight:600;letter-spacing:-0.01em;margin:0 0 10px;line-height:1.1;}
+  .sub{color:var(--text-muted);font-size:16px;margin:0;max-width:44ch;line-height:1.55;}
+  .add-form{display:flex;gap:10px;}
+  .add-form input{
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;
+    padding:12px 18px;color:var(--text);font-size:14px;min-width:220px;
+    transition:border-color var(--dur) ease;
+  }
+  .add-form input:focus{outline:none;border-color:var(--accent);}
+  .add-form button{
+    background:var(--accent);color:#fff;border:none;border-radius:999px;
+    padding:12px 22px;font-size:14px;font-weight:600;cursor:pointer;
+    transition:transform var(--dur) ease;
+  }
+  .add-form button:hover{transform:translateY(-1px);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:28px; box-shadow:0 1px 2px rgba(36,32,25,0.04);
+    transition:box-shadow var(--dur) ease, transform var(--dur) ease;
+  }
+  .card:hover{box-shadow:0 12px 28px -12px rgba(36,32,25,0.14);transform:translateY(-2px);}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+  .city{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:0;}
+  .city-sub{color:var(--text-muted);font-size:13px;margin:3px 0 0;}
+  .remove{background:none;border:none;color:var(--text-faint);font-size:12px;cursor:pointer;padding:4px;}
+  .remove:hover{color:var(--accent);}
+  .temp-row{display:flex;align-items:baseline;gap:12px;margin:20px 0 6px;}
+  .temp{font-size:44px;font-weight:600;letter-spacing:-0.02em;}
+  .cond{color:var(--text-muted);font-size:14px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 13px;
+    font-size:12px;font-weight:600;background:var(--surface-2);color:var(--text);
+    margin-top:4px;
+  }
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--good);}
+  .stat-row{display:flex;gap:16px;margin-top:16px;font-size:13px;color:var(--text-muted);flex-wrap:wrap;}
+  .stat-row strong{color:var(--text);font-weight:600;}
+  .score-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:20px;padding-top:18px;border-top:1px solid var(--border);
+  }
+  .score-label{font-size:12px;color:var(--text-muted);font-weight:500;}
+  .score-ring{
+    display:flex;align-items:center;gap:10px;
+  }
+  .score-num{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--accent);}
+  .note{max-width:960px;margin:44px auto 0;color:var(--text-faint);font-size:12px;line-height:1.6;border-top:1px solid var(--border);padding-top:18px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="label-tag">Direction B — Light editorial (Stripe / studio-brand adjacent)</p>
+    <div class="header">
+      <div>
+        <span class="eyebrow"><span class="eyebrow-dot"></span>Live data</span>
+        <h1>Outdoor conditions</h1>
+        <p class="sub">Weather, air quality and daylight, merged into one activity score per city.</p>
+      </div>
+      <div class="add-form">
+        <input placeholder="Add a city…" />
+        <button>Add city</button>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <p class="city">Lisbon</p>
+            <p class="city-sub">Portugal</p>
+          </div>
+          <button class="remove">Remove</button>
+        </div>
+        <div class="temp-row">
+          <span class="temp">24°</span>
+          <span class="cond">Partly cloudy</span>
+        </div>
+        <span class="badge"><span class="badge-dot"></span>Good air · AQI 32</span>
+        <div class="stat-row">
+          <span>Humidity <strong>58%</strong></span>
+          <span>Wind <strong>12 km/h</strong></span>
+          <span>Sunset <strong>20:47</strong></span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Activity score</span>
+          <div class="score-ring">
+            <span class="score-num">82</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <p class="city">Coimbra</p>
+            <p class="city-sub">Portugal</p>
+          </div>
+          <button class="remove">Remove</button>
+        </div>
+        <div class="temp-row">
+          <span class="temp">21°</span>
+          <span class="cond">Clear</span>
+        </div>
+        <span class="badge" style="color:#8a6a1f"><span class="badge-dot" style="background:#c9a34a"></span>Moderate air · AQI 61</span>
+        <div class="stat-row">
+          <span>Humidity <strong>44%</strong></span>
+          <span>Wind <strong>8 km/h</strong></span>
+          <span>Sunset <strong>20:51</strong></span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Activity score</span>
+          <div class="score-ring">
+            <span class="score-num">67</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Character: warm off-white paper background, serif display type for headline/city/score paired with clean sans body, one confident terracotta accent, soft paper shadows instead of glass. Reads as a considered brand/studio product rather than a generic dark dashboard.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction C — Instrument Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08090a;
+    --surface:#0e0f11;
+    --surface-2:#141618;
+    --border:rgba(255,255,255,0.07);
+    --border-strong:rgba(255,255,255,0.14);
+    --text:#e4e6e8;
+    --text-muted:#7b8086;
+    --text-faint:#4a4e52;
+    --accent:#e8b34a;
+    --good:#43d17a;
+    --moderate:#e8b34a;
+    --radius:4px;
+    --dur:90ms;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:48px 24px;
+  }
+  .label-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--text-faint); margin:0 0 28px;
+  }
+  .wrap{max-width:960px;margin:0 auto;}
+  .header{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+    margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:500;color:var(--good);margin-bottom:10px;letter-spacing:.04em;
+  }
+  .eyebrow-dot{width:6px;height:6px;background:var(--good);}
+  h1{font-size:22px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;text-transform:uppercase;}
+  .sub{color:var(--text-muted);font-size:13px;margin:0;max-width:44ch;line-height:1.5;font-family:'JetBrains Mono',monospace;}
+  .add-form{display:flex;gap:0;border:1px solid var(--border);}
+  .add-form input{
+    background:var(--surface);border:none;
+    padding:9px 14px;color:var(--text);font-size:12px;min-width:200px;font-family:'JetBrains Mono',monospace;
+  }
+  .add-form input:focus{outline:none;background:var(--surface-2);}
+  .add-form button{
+    background:var(--accent);color:#1a1400;border:none;
+    padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;
+    text-transform:uppercase;letter-spacing:.04em;
+    transition:filter var(--dur) linear;
+  }
+  .add-form button:hover{filter:brightness(1.1);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);}
+  .card{
+    background:var(--surface);padding:20px;
+    transition:background var(--dur) linear;
+  }
+  .card:hover{background:var(--surface-2);}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;}
+  .city{font-size:14px;font-weight:600;letter-spacing:.02em;margin:0;text-transform:uppercase;}
+  .city-sub{color:var(--text-faint);font-size:11px;margin:2px 0 0;font-family:'JetBrains Mono',monospace;}
+  .remove{background:none;border:none;color:var(--text-faint);font-size:10px;cursor:pointer;padding:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+  .remove:hover{color:var(--text);}
+  .main-row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin:18px 0 14px;}
+  .temp{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;letter-spacing:-0.01em;}
+  .cond{color:var(--text-muted);font-size:11px;font-family:'JetBrains Mono',monospace;margin-top:2px;}
+  .gauge{position:relative;width:64px;height:64px;}
+  .gauge svg{transform:rotate(-90deg);}
+  .gauge-num{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent);
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;padding:3px 8px;
+    font-size:10px;font-weight:600;border:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .badge-dot{width:5px;height:5px;background:var(--good);}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;}
+  .stat{font-family:'JetBrains Mono',monospace;}
+  .stat-label{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;}
+  .stat-val{font-size:13px;color:var(--text);font-weight:500;margin-top:2px;}
+  .note{max-width:960px;margin:32px auto 0;color:var(--text-faint);font-size:12px;line-height:1.6;border-top:1px solid var(--border);padding-top:16px;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="label-tag">Direction C — Instrument panel (data-forward pro tool)</p>
+    <div class="header">
+      <div>
+        <span class="eyebrow"><span class="eyebrow-dot"></span>LIVE</span>
+        <h1>Outdoor conditions</h1>
+        <p class="sub">Weather / air quality / daylight → one activity score per city.</p>
+      </div>
+      <div class="add-form">
+        <input placeholder="add city…" />
+        <button>Add</button>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <p class="city">Lisbon</p>
+            <p class="city-sub">PT · 38.72N 9.14W</p>
+          </div>
+          <button class="remove">Rm</button>
+        </div>
+        <div class="main-row">
+          <div>
+            <div class="temp">24°</div>
+            <div class="cond">Partly cloudy</div>
+          </div>
+          <div class="gauge">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--border-strong)" stroke-width="4"/>
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--accent)" stroke-width="4"
+                stroke-dasharray="169.6" stroke-dashoffset="30.5" stroke-linecap="round"/>
+            </svg>
+            <div class="gauge-num">82</div>
+          </div>
+        </div>
+        <span class="badge"><span class="badge-dot"></span>AQI 32 GOOD</span>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-label">Humidity</div><div class="stat-val">58%</div></div>
+          <div class="stat"><div class="stat-label">Wind</div><div class="stat-val">12km/h</div></div>
+          <div class="stat"><div class="stat-label">Sunset</div><div class="stat-val">20:47</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <p class="city">Coimbra</p>
+            <p class="city-sub">PT · 40.21N 8.43W</p>
+          </div>
+          <button class="remove">Rm</button>
+        </div>
+        <div class="main-row">
+          <div>
+            <div class="temp">21°</div>
+            <div class="cond">Clear</div>
+          </div>
+          <div class="gauge">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--border-strong)" stroke-width="4"/>
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--moderate)" stroke-width="4"
+                stroke-dasharray="169.6" stroke-dashoffset="56" stroke-linecap="round"/>
+            </svg>
+            <div class="gauge-num">67</div>
+          </div>
+        </div>
+        <span class="badge" style="color:var(--moderate)"><span class="badge-dot" style="background:var(--moderate)"></span>AQI 61 MODERATE</span>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-label">Humidity</div><div class="stat-val">44%</div></div>
+          <div class="stat"><div class="stat-label">Wind</div><div class="stat-val">8km/h</div></div>
+          <div class="stat"><div class="stat-label">Sunset</div><div class="stat-val">20:51</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Character: near-black surfaces, hairline grid dividers instead of card gaps, monospace numerals throughout, the activity score rendered as a radial gauge (the hero element) rather than a plain number. Reads as a serious analytics/ops tool — the most "we take data seriously" of the three.</p>
+  </div>
+</body>
+</html>
