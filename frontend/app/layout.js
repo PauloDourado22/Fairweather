@@ -1,24 +1,26 @@
-import { Inter } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 import './globals.css';
 
-// next/font self-hosts Inter at build time (no runtime Google Fonts request,
-// no layout-shifting flash of unstyled text). Exposed as a CSS variable so
-// globals.css controls exactly where it's applied instead of it clobbering
-// every element via a global className.
-const inter = Inter({
+// The Fairweather poster direction runs entirely on Archivo's heavy display
+// weights (800/900 for the wordmark and score numbers) — Inter's inability
+// to go that heavy without looking mushy is exactly why the earlier "dark
+// glass" direction and this one need different fonts, not just different
+// colors.
+const archivo = Archivo({
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['500', '600', '700', '800', '900'],
+  variable: '--font-archivo',
   display: 'swap',
 });
 
 export const metadata = {
-  title: 'Outdoor Conditions Dashboard',
-  description: 'Weather, air quality, and daylight — aggregated, with a single outdoor activity score.',
+  title: 'Fairweather',
+  description: 'Fairweather aggregates weather, air quality, and daylight into a single outdoor activity score per city.',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={archivo.variable}>
       <body>{children}</body>
     </html>
   );

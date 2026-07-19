@@ -1,4 +1,4 @@
-# Outdoor Conditions Dashboard
+# Fairweather
 
 A dashboard that aggregates weather, air quality, and daylight data from three
 independent, keyless third-party APIs into one view — with a derived

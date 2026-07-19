@@ -4,7 +4,11 @@ import { cached } from '../utils/cache.js';
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 
 /**
- * Fetches current conditions + a 5-day daily forecast for a coordinate pair.
+ * Fetches current conditions + an hourly forecast + a 5-day daily forecast
+ * for a coordinate pair, all in one request — Open-Meteo returns whatever
+ * combination of `current`/`hourly`/`daily` blocks you ask for from a
+ * single call, so adding hourly data (for the best-window feature) didn't
+ * cost a second upstream request or a second cache entry.
  * Source: Open-Meteo Forecast API (https://open-meteo.com) — free, keyless,
  * no rate-limit key management needed, which matters for a portfolio demo
  * that has to keep working unattended.
@@ -16,6 +20,7 @@ export async function getWeather(lat, lon) {
       latitude: lat,
       longitude: lon,
       current: 'temperature_2m,apparent_temperature,precipitation,wind_speed_10m,weather_code',
+      hourly: 'temperature_2m,precipitation_probability,wind_speed_10m,weather_code',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
       timezone: 'auto',
       forecast_days: '5',
@@ -27,12 +32,25 @@ export async function getWeather(lat, lon) {
     const data = await res.json();
     return {
       current: {
+        // `timezone=auto` makes every timestamp in this response a naive
+        // local-time string ("2026-07-19T14:00", no UTC offset) already
+        // expressed in the city's own timezone. Keeping this one around is
+        // what lets computeBestWindow find "the hourly buckets from now
+        // onward" with plain string comparison instead of parsing dates.
+        time: data.current.time,
         temperatureC: data.current.temperature_2m,
         feelsLikeC: data.current.apparent_temperature,
         precipitationMm: data.current.precipitation,
         windKph: data.current.wind_speed_10m,
         weatherCode: data.current.weather_code,
       },
+      hourly: data.hourly.time.map((time, i) => ({
+        time,
+        temperatureC: data.hourly.temperature_2m[i],
+        precipitationChancePct: data.hourly.precipitation_probability[i],
+        windKph: data.hourly.wind_speed_10m[i],
+        weatherCode: data.hourly.weather_code[i],
+      })),
       daily: data.daily.time.map((date, i) => ({
         date,
         weatherCode: data.daily.weather_code[i],

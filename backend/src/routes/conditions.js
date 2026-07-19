@@ -3,12 +3,12 @@ import { geocodeCity } from '../services/geocode.js';
 import { getWeather, WEATHER_CODE_LABELS } from '../services/weather.js';
 import { getAirQuality } from '../services/airQuality.js';
 import { getDaylight } from '../services/daylight.js';
-import { computeActivityScore } from '../services/activityScore.js';
+import { computeActivityScore, computeBestWindow } from '../services/activityScore.js';
 
 export const conditionsRouter = Router();
 
 /**
- * GET /api/conditions?city=Leiria
+ * GET /api/conditions?city=Leiria&wTemp=35&wPrecip=30&wAqi=25&wWind=10
  *
  * This is the aggregation endpoint: one request in, three upstream calls out
  * (run in parallel with Promise.allSettled), one unified response back. The
@@ -17,6 +17,12 @@ export const conditionsRouter = Router();
  * backend here instead of calling these APIs straight from the browser:
  * we control caching, we can add a 4th provider later without touching the
  * frontend, and we don't leak upstream outages straight to the UI.
+ *
+ * The four w* params are optional and don't need to sum to anything in
+ * particular — computeActivityScore normalizes whatever it's given. This is
+ * what backs the "tune the score" panel in the UI: the client sends its
+ * current slider values on every request instead of the server holding any
+ * per-user config, so there's no state to keep in sync anywhere.
  */
 conditionsRouter.get('/', async (req, res) => {
   const city = req.query.city;
@@ -40,8 +46,11 @@ conditionsRouter.get('/', async (req, res) => {
     const airQuality = unwrap(airResult);
     const daylight = unwrap(daylightResult);
 
+    const weights = parseWeights(req.query);
     const activity =
-      weather && airQuality ? computeActivityScore({ weather, airQuality }) : null;
+      weather && airQuality ? computeActivityScore({ weather, airQuality, weights }) : null;
+    const bestWindow =
+      weather && airQuality ? computeBestWindow({ weather, airQuality, weights }) : null;
 
     res.json({
       location,
@@ -57,6 +66,7 @@ conditionsRouter.get('/', async (req, res) => {
       airQuality: airQuality ?? { error: 'Air quality provider unavailable' },
       daylight: daylight ?? { error: 'Daylight provider unavailable' },
       activityScore: activity,
+      bestWindow,
       fetchedAt: new Date().toISOString(),
     });
   } catch (err) {
@@ -67,4 +77,18 @@ conditionsRouter.get('/', async (req, res) => {
 
 function unwrap(settledResult) {
   return settledResult.status === 'fulfilled' ? settledResult.value : null;
+}
+
+// Returns undefined (not a partial object) when none of the four params are
+// present, so computeActivityScore's own "no weights passed" default path
+// runs untouched instead of normalizing four undefineds.
+function parseWeights(query) {
+  const keys = ['wTemp', 'wPrecip', 'wAqi', 'wWind'];
+  if (!keys.some((k) => query[k] !== undefined)) return undefined;
+  return {
+    temperature: query.wTemp,
+    precipitationChance: query.wPrecip,
+    airQuality: query.wAqi,
+    wind: query.wWind,
+  };
 }

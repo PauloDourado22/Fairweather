@@ -1,53 +1,18 @@
 /* ============================================================
-   Design tokens
-   A small, deliberate palette rather than one-off hex values
-   scattered through components — this is what makes a redesign
-   like this maintainable instead of a one-time coat of paint.
+   Design tokens — Fairweather poster direction (2a in
+   Design Directions.dc.html, chosen from 1c "Open Air").
+   Cream/ink editorial poster instead of the earlier dark glass
+   theme: color now comes from each city's own score tier
+   (see lib/scoreTiers.js) rather than one fixed accent.
    ============================================================ */
 :root {
-  /* Surfaces — layered, not flat. Each level up is slightly lighter. */
-  --bg: #0a0b0f;
-  --surface: rgba(255, 255, 255, 0.035);
-  --surface-solid: #13151b;
-  --surface-hover: rgba(255, 255, 255, 0.055);
-  --surface-2: #191c24;
-
-  /* Borders — hairline, translucent so they pick up the glow behind them */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-
-  /* Text */
-  --text: #f4f5f7;
-  --text-muted: #8d94a6;
-  --text-faint: #5c6478;
-
-  /* Accent — indigo → cyan gradient is the signature of the UI */
-  --accent: #6366f1;
-  --accent-2: #22d3ee;
-  --accent-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 45%, #22d3ee 100%);
-  --accent-soft: rgba(99, 102, 241, 0.14);
-
-  /* Semantic status colors */
-  --good: #34d399;
-  --good-soft: rgba(52, 211, 153, 0.14);
-  --moderate: #fbbf24;
-  --moderate-soft: rgba(251, 191, 36, 0.14);
-  --poor: #fb923c;
-  --poor-soft: rgba(251, 146, 60, 0.14);
-  --bad: #f87171;
-  --bad-soft: rgba(248, 113, 113, 0.14);
-
-  /* Geometry */
-  --radius-sm: 10px;
-  --radius: 18px;
-  --radius-lg: 24px;
-
-  /* Elevation — soft, low-contrast shadows; premium UIs whisper, not shout */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 24px 48px -16px rgba(0, 0, 0, 0.6), 0 8px 24px -8px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 12px 32px -12px rgba(99, 102, 241, 0.35);
-
+  --cream: #f2efe8;
+  --ink: #1d1c18;
+  --ink-soft: #6f6c60;
+  --accent: #b3552e;
+  --line: rgba(29, 28, 24, 0.12);
+  --live: #3d7a45;
+  --radius: 4px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -55,270 +20,109 @@
   box-sizing: border-box;
 }
 
-html {
-  color-scheme: dark;
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--bg);
-  background-image:
-    radial-gradient(680px circle at 12% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
-    radial-gradient(560px circle at 88% 0%, rgba(34, 211, 238, 0.10), transparent 55%);
-  background-repeat: no-repeat;
-  color: var(--text);
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-archivo), 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--accent-soft);
-  color: var(--text);
-}
-
-/* Custom scrollbar — subtle, matches the surface palette instead of the OS default */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 999px;
-  border: 2px solid var(--bg);
-}
-
-a,
-button,
-input {
-  font-family: inherit;
+  background: rgba(179, 85, 46, 0.2);
+  color: var(--ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-2);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ============================================================
-   Layout
+   Page shell
    ============================================================ */
-.container {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 56px 24px 80px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin-bottom: 40px;
-}
-
-.header-copy {
+.page {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent-2);
-  background: var(--accent-soft);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  padding: 5px 12px 5px 10px;
-  border-radius: 999px;
-}
-
-.eyebrow-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--good);
-  box-shadow: 0 0 0 3px var(--good-soft);
-}
-
-.header h1 {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin: 0;
-  background: linear-gradient(180deg, #ffffff 0%, #c7cbdb 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.header p {
-  color: var(--text-muted);
-  margin: 0;
-  font-size: 15px;
-  max-width: 46ch;
-  line-height: 1.5;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
 }
 
 /* ============================================================
-   Card
+   Header
    ============================================================ */
-.card {
-  position: relative;
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-lg);
-}
-
-.card-header {
+.app-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 4px;
-  gap: 12px;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 24px 40px;
+  border-bottom: 1.5px solid var(--ink);
 }
 
-.city-name {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.city-sub {
-  color: var(--text-muted);
-  font-size: 13px;
-  margin: 3px 0 0;
-}
-
-.remove-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--text-faint);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  opacity: 0;
-  transition: opacity 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
-}
-
-.card:hover .remove-btn,
-.remove-btn:focus-visible {
-  opacity: 1;
-}
-
-.remove-btn:hover {
-  color: var(--bad);
-  background: var(--bad-soft);
-  border-color: rgba(248, 113, 113, 0.25);
-}
-
-.temp-row {
+.wordmark-row {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  margin: 18px 0 6px;
+  gap: 16px;
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
-.temp-value {
-  font-size: 42px;
-  font-weight: 700;
+.wordmark {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 900;
   letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.condition-label {
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
   white-space: nowrap;
 }
 
-.badge-dot {
+.wordmark-dot {
+  color: var(--accent);
+}
+
+.tagline {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2b4a1e;
+  white-space: nowrap;
+}
+
+.live-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.stat-row {
-  display: flex;
-  gap: 18px;
-  margin-top: 14px;
-  font-size: 13px;
-  color: var(--text-muted);
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.stat-row strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.score-ring {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-}
-
-.score-number {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-
-.score-ring .city-sub {
-  margin-top: 4px;
-  font-weight: 500;
+  background: var(--live);
+  animation: blink 2.4s ease-in-out infinite;
 }
 
 /* ============================================================
@@ -330,90 +134,241 @@ input {
 }
 
 .add-city-form input {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 11px 16px;
-  color: var(--text);
-  font-size: 14px;
-  min-width: 220px;
-  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  width: 180px;
+  min-width: 0;
 }
 
 .add-city-form input::placeholder {
-  color: var(--text-faint);
-}
-
-.add-city-form input:hover {
-  border-color: var(--border-strong);
+  color: var(--ink-soft);
 }
 
 .add-city-form input:focus {
   outline: none;
   border-color: var(--accent);
-  background: var(--surface-solid);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  box-shadow: 0 0 0 3px rgba(179, 85, 46, 0.15);
 }
 
-.add-city-form button {
-  background: var(--accent-gradient);
+.add-city-submit {
+  background: var(--ink);
+  color: var(--cream);
   border: none;
-  border-radius: var(--radius-sm);
-  color: white;
-  padding: 11px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
   cursor: pointer;
-  box-shadow: 0 4px 14px -4px rgba(99, 102, 241, 0.5);
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), filter 0.2s var(--ease);
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.add-city-form button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.6);
-  filter: brightness(1.05);
+.add-city-submit:hover:not(:disabled) {
+  transform: scale(1.05);
 }
 
-.add-city-form button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.add-city-form button:disabled {
+.add-city-submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
+  transform: none;
 }
 
 /* ============================================================
-   States — error / empty / loading
+   Panels — the color-block poster row
    ============================================================ */
+.panels {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.panel {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel-bg, var(--cream));
+  color: var(--panel-ink, var(--ink));
+  padding: 36px 28px 30px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--line);
+  position: relative;
+  transition: flex 0.45s var(--ease);
+}
+
+.panel:last-child {
+  border-right: none;
+}
+
+@media (hover: hover) {
+  .panel:hover {
+    flex: 1.4;
+  }
+}
+
+.panel-ribbon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--panel-ink, var(--ink));
+  color: var(--panel-bg, var(--cream));
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 7px 0;
+}
+
+.panel-name {
+  font-size: clamp(19px, 1.8vw, 25px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.panel-cond {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.65;
+  margin: 8px 0 0;
+}
+
+.panel-temp-row {
+  margin-top: 30px;
+  display: flex;
+  align-items: baseline;
+}
+
+.panel-temp {
+  font-size: clamp(38px, 4.2vw, 52px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.panel-feels {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-left: 8px;
+}
+
+.panel-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 26px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.panel-stat-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.panel-stat-row span:first-child {
+  opacity: 0.6;
+}
+
+.panel-stat-row span:last-child {
+  white-space: nowrap;
+}
+
+.panel-forecast {
+  margin-top: 24px;
+}
+
+.panel-forecast-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin: 0 0 8px;
+}
+
+.panel-sparkline {
+  width: 100%;
+  height: 36px;
+  display: block;
+}
+
+.panel-score {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.panel-score-number {
+  font-size: clamp(52px, 7vw, 88px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+}
+
+.panel-score-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   States — loading / error / empty
+   ============================================================ */
+.skeleton {
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(29, 28, 24, 0.06) 0%, rgba(29, 28, 24, 0.13) 50%, rgba(29, 28, 24, 0.06) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-cond { width: 40%; height: 12px; }
+.skeleton-temp { width: 45%; height: 48px; margin-top: 30px; }
+.skeleton-stats { width: 100%; height: 60px; margin-top: 26px; }
+.skeleton-score { width: 50%; height: 70px; margin-top: auto; }
+
 .error-text {
-  color: var(--bad);
+  color: #8a2c1a;
   font-size: 13px;
   margin-top: 8px;
 }
 
 .empty-state {
-  color: var(--text-muted);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   text-align: center;
-  padding: 72px 24px;
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-}
-
-.empty-state-icon {
-  font-size: 28px;
-  margin-bottom: 12px;
-  opacity: 0.7;
+  color: var(--ink-soft);
+  margin: 40px;
+  padding: 60px 24px;
+  border: 1px dashed rgba(29, 28, 24, 0.25);
+  border-radius: var(--radius);
 }
 
 .empty-state-title {
-  color: var(--text);
+  color: var(--ink);
   font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 6px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .empty-state p {
@@ -421,75 +376,331 @@ input {
   font-size: 14px;
 }
 
-/* Skeleton loading card — replaces the plain "Loading…" text so the grid
-   doesn't jump/flash while requests are in flight. */
-.skeleton {
-  height: 14px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, var(--surface-2) 0%, rgba(255, 255, 255, 0.09) 50%, var(--surface-2) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.skeleton-title { width: 55%; height: 18px; margin-bottom: 10px; }
-.skeleton-sub { width: 35%; height: 12px; }
-.skeleton-temp { width: 40%; height: 42px; margin: 18px 0 8px; }
-.skeleton-row { width: 70%; height: 12px; margin-top: 14px; }
-.skeleton-block { width: 100%; height: 70px; margin-top: 18px; border-radius: var(--radius-sm); }
-
-/* ============================================================
-   Forecast chart
-   ============================================================ */
-.forecast-chart {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-}
-
-.forecast-chart-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  margin: 0 0 6px;
-}
-
 /* ============================================================
    Footer
    ============================================================ */
-.footer {
-  margin-top: 56px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  color: var(--text-faint);
-  font-size: 12px;
-  text-align: center;
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 40px;
+  border-top: 1.5px solid var(--ink);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
 }
 
 /* ============================================================
    Responsive
    ============================================================ */
-@media (max-width: 560px) {
-  .container {
-    padding: 32px 16px 56px;
+@media (max-width: 860px) {
+  .app-header {
+    padding: 20px 22px;
   }
-  .header {
-    align-items: flex-start;
+  .app-footer {
+    padding: 12px 22px;
   }
-  .header h1 {
-    font-size: 26px;
+  .panels {
+    flex-direction: column;
   }
-  .add-city-form {
-    width: 100%;
+  .panel {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    min-height: 420px;
   }
-  .add-city-form input {
-    min-width: 0;
+  .panel:hover {
     flex: 1;
   }
+  .add-city-form input {
+    width: 140px;
+  }
+}
+
+/* ============================================================
+   Panel header row (name + remove control)
+   ============================================================ */
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.panel-remove {
+  background: transparent;
+  border: none;
+  color: var(--panel-ink, var(--ink));
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .panel:hover .panel-remove {
+    opacity: 0.55;
+  }
+}
+
+.panel-remove:hover,
+.panel-remove:focus-visible {
+  opacity: 1 !important;
+}
+
+/* ============================================================
+   Score weights panel — "tune the score" (config panel demo)
+   ============================================================ */
+.tune-btn {
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tune-btn:hover {
+  background: rgba(29, 28, 24, 0.06);
+}
+
+.tune-btn[aria-expanded="true"] {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.weights-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 40px 28px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.weights-panel-intro {
+  max-width: 640px;
+}
+
+.weights-panel-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+.weights-panel-copy {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.weights-grid {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.weight-control {
+  flex: 1 1 160px;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weight-control-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.weight-pct {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.weight-control input[type='range'] {
+  width: 100%;
+  height: 4px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preset-chip {
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.preset-chip:hover {
+  background: rgba(29, 28, 24, 0.06);
+}
+
+.preset-chip.is-active {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.preset-desc {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 860px) {
+  .weights-panel {
+    padding: 20px 22px 24px;
+  }
+}
+
+/* ============================================================
+   Add-city autocomplete dropdown
+   ============================================================ */
+.add-city-wrap {
+  position: relative;
+}
+
+.add-city-input-wrap {
+  position: relative;
+}
+
+.city-suggestions {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--cream);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.city-suggestion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.city-suggestion-name {
+  font-weight: 600;
+}
+
+.city-suggestion-meta {
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.city-suggestion:hover,
+.city-suggestion.is-active {
+  background: rgba(29, 28, 24, 0.08);
+}
+
+/* ============================================================
+   Duplicate-city states — greyed suggestion + inline notice
+   ============================================================ */
+.city-suggestion:disabled,
+.city-suggestion.is-duplicate {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.city-suggestion.is-duplicate:hover {
+  background: transparent;
+}
+
+.add-city-notice {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 8px 14px;
+  background: var(--cream);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ============================================================
+   Best window — the prescriptive callout ("go outside at 14:00")
+   ============================================================ */
+.panel-best-window {
+  margin-top: 18px;
+  padding: 10px 12px;
+  background: rgba(29, 28, 24, 0.07);
+  border-radius: var(--radius);
+}
+
+/* Stacked (label above time) instead of side-by-side on purpose — a
+   flex row with justify-content: space-between let the bold, letter-spaced
+   label wrap to two lines the moment a narrow panel gave it less room than
+   the time needed, throwing off the baseline alignment between a two-line
+   label and a one-line time. Stacking can't break that way at any width. */
+.panel-best-window-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.panel-best-window-time {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
 }
