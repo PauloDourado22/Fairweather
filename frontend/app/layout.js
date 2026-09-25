@@ -16,6 +16,12 @@ const archivo = Archivo({
 export const metadata = {
   title: 'Fairweather',
   description: 'Fairweather aggregates weather, air quality, and daylight into a single outdoor activity score per city.',
+  openGraph: {
+    title: 'Fairweather — one score for being outside',
+    description: 'Fairweather aggregates weather, air quality, and daylight into a single outdoor activity score per city.',
+    images: ['/og-image.png'],
+  },
+  twitter: { card: 'summary_large_image', images: ['/og-image.png'] },
 };
 
 export default function RootLayout({ children }) {
