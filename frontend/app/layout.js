@@ -14,6 +14,7 @@ const archivo = Archivo({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://fairweather-pi.vercel.app'),
   title: 'Fairweather',
   description: 'Fairweather aggregates weather, air quality, and daylight into a single outdoor activity score per city.',
   openGraph: {
