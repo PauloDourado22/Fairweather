@@ -42,9 +42,9 @@ conditionsRouter.get('/', async (req, res) => {
       getDaylight(location.latitude, location.longitude),
     ]);
 
-    const weather = unwrap(weatherResult);
-    const airQuality = unwrap(airResult);
-    const daylight = unwrap(daylightResult);
+    const weather = unwrap('weather', weatherResult);
+    const airQuality = unwrap('airQuality', airResult);
+    const daylight = unwrap('daylight', daylightResult);
 
     const weights = parseWeights(req.query);
     const activity =
@@ -75,8 +75,16 @@ conditionsRouter.get('/', async (req, res) => {
   }
 });
 
-function unwrap(settledResult) {
-  return settledResult.status === 'fulfilled' ? settledResult.value : null;
+// Logs the rejection reason before discarding it — Promise.allSettled swallows
+// the error entirely otherwise, which left us with zero visibility into *why*
+// a provider failed in production (this is what we were flying blind on when
+// weather started failing on Render but air quality/daylight kept working).
+function unwrap(label, settledResult) {
+  if (settledResult.status === 'rejected') {
+    console.error(`[conditions] ${label} provider failed:`, settledResult.reason);
+    return null;
+  }
+  return settledResult.value;
 }
 
 // Returns undefined (not a partial object) when none of the four params are
