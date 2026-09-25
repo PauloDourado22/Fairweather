@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
 import { cached } from '../utils/cache.js';
+import { fetchWithRetry } from '../utils/fetchWithRetry.js';
 
 const GEOCODE_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 
@@ -12,7 +12,7 @@ export async function geocodeCity(name) {
   const key = `geocode:${name.toLowerCase()}`;
   return cached(key, async () => {
     const url = `${GEOCODE_URL}?name=${encodeURIComponent(name)}&count=1&language=en&format=json`;
-    const res = await fetch(url);
+    const res = await fetchWithRetry(url);
     if (!res.ok) {
       throw new Error(`Geocoding upstream failed with status ${res.status}`);
     }
@@ -38,7 +38,7 @@ export async function searchCities(query, limit = 6) {
   const key = `geocode-search:${query.toLowerCase()}:${limit}`;
   return cached(key, async () => {
     const url = `${GEOCODE_URL}?name=${encodeURIComponent(query)}&count=${limit}&language=en&format=json`;
-    const res = await fetch(url);
+    const res = await fetchWithRetry(url);
     if (!res.ok) {
       throw new Error(`Geocoding upstream failed with status ${res.status}`);
     }

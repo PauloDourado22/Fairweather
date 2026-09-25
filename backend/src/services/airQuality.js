@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
 import { cached } from '../utils/cache.js';
+import { fetchWithRetry } from '../utils/fetchWithRetry.js';
 
 const AIR_QUALITY_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 
@@ -20,7 +20,7 @@ export async function getAirQuality(lat, lon) {
       current: 'pm2_5,pm10,us_aqi',
       timezone: 'auto',
     });
-    const res = await fetch(`${AIR_QUALITY_URL}?${params}`);
+    const res = await fetchWithRetry(`${AIR_QUALITY_URL}?${params}`);
     if (!res.ok) {
       throw new Error(`Air quality upstream failed with status ${res.status}`);
     }

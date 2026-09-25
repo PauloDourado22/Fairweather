@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
 import { cached } from '../utils/cache.js';
+import { fetchWithRetry } from '../utils/fetchWithRetry.js';
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 
@@ -25,7 +25,7 @@ export async function getWeather(lat, lon) {
       timezone: 'auto',
       forecast_days: '5',
     });
-    const res = await fetch(`${FORECAST_URL}?${params}`);
+    const res = await fetchWithRetry(`${FORECAST_URL}?${params}`);
     if (!res.ok) {
       throw new Error(`Weather upstream failed with status ${res.status}`);
     }
