@@ -62,9 +62,12 @@ conditionsRouter.get('/', async (req, res) => {
               conditionLabel: WEATHER_CODE_LABELS[weather.current.weatherCode] ?? 'Unknown',
             },
           }
-        : { error: 'Weather provider unavailable' },
-      airQuality: airQuality ?? { error: 'Air quality provider unavailable' },
-      daylight: daylight ?? { error: 'Daylight provider unavailable' },
+        : // TEMP DEBUG: the console.error in unwrap() logs the reason, but Render's
+          // free tier makes those logs unreliable to actually see — so also put it
+          // directly in the response body. Revert once the cause is found.
+          { error: 'Weather provider unavailable', detail: weatherResult.reason?.message },
+      airQuality: airQuality ?? { error: 'Air quality provider unavailable', detail: airResult.reason?.message },
+      daylight: daylight ?? { error: 'Daylight provider unavailable', detail: daylightResult.reason?.message },
       activityScore: activity,
       bestWindow,
       fetchedAt: new Date().toISOString(),
